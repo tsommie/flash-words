@@ -13,7 +13,7 @@ import Home from "./pages/Home.vue";
     <router-view />
   </main>
 
-  <Footer />
+<!--  <Footer />-->
 </template>
 
 <style scoped>
