@@ -10,6 +10,7 @@ const totalAsked = ref(0);
 const totalCorrect = ref(0);
 const totalWrong = ref(0);
 const askedQuestions = ref([]);
+const canShowAnswer = ref(false);
 
 const getRandomWord = () => {
   totalAsked.value++;
@@ -40,6 +41,8 @@ const checkAnswer = () => {
       text: "Wrong answer!",
     });
   }
+
+  canShowAnswer.value = true;
 };
 
 const toggleAnswer = () => {
@@ -53,6 +56,8 @@ const toggleAnswer = () => {
 const nextWord = () => {
   askedQuestions.value.push(randomWord.value);
   randomWord.value = getRandomWord();
+  translation.value = null;
+  canShowAnswer.value = false;
 };
 </script>
 
@@ -66,7 +71,7 @@ const nextWord = () => {
         Failed: <span v-text="totalWrong"></span>
       </div>
       <div class="badge text-bg-light rounded-pill align-text-bottom ms-1">
-        Total: <span v-text="totalAsked"></span>
+        Total Asked: <span v-text="totalAsked"></span>
       </div>
     </template>
   </Header>
@@ -76,19 +81,17 @@ const nextWord = () => {
       <div class="mb-4">
         <h4 class="text-capitalize text-body-emphasis">
           <span v-text="randomWord.word"></span>
-          <sup>
-            <button type="button" class="badge bg-info rounded-pill border-0 fs-6 ms-2"
-                    data-bs-toggle="tooltip" data-bs-placement="top"
-                    data-bs-custom-class="custom-tooltip"
-                    data-bs-title="verbs[0].hint">
-              !
-            </button>
-          </sup>
+          <br class="my-3" />
+          <small class="text-muted fs-6">
+            <span class="badge bg-info rounded-pill border-0 fs-6 mx-2">!</span>
+            <span v-text="randomWord.hint"></span>
+          </small>
         </h4>
-        <div v-if="translation">
-          <span class="text-muted" v-text="translation"></span>
-          <hr>
-          <h5 class="text-muted">Examples:</h5>
+        <div v-if="translation" class="my-3">
+          <h4 class="text-capitalize mb-4">
+            <span class="text-muted fs-5">Translation:</span> <span v-text="translation"></span>
+          </h4>
+
           <ul class="list-group list-group-flush">
             <li v-for="example in randomWord.examples" :key="example"  class="list-group-item">
               <div>
@@ -109,7 +112,7 @@ const nextWord = () => {
 
     <div class="card-footer">
       <div class="d-flex justify-content-between">
-        <button type="button" class="btn btn-outline-dark" @click="toggleAnswer">
+        <button type="button" class="btn btn-outline-dark" @click="toggleAnswer" :disabled="!canShowAnswer">
           <span v-if="translation">Hide answer</span>
           <span v-else>Show answer</span>
         </button>
